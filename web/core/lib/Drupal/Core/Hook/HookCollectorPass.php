@@ -369,22 +369,24 @@ class HookCollectorPass implements CompilerPassInterface {
    *
    * @return void
    */
-  public static function checkForProceduralOnlyHooks(Hook $hook, string $class): void {
-    $staticDenyHooks = [
-      'hook_info',
-      'install',
-      'module_implements_alter',
-      'requirements',
-      'schema',
-      'uninstall',
-      'update_last_removed',
-      'hook_install_tasks',
-      'hook_install_tasks_alter',
-    ];
+	public static function checkForProceduralOnlyHooks(Hook $hookAttribute, string $class) : void {
 
-    if (in_array($hook->hook, $staticDenyHooks) || preg_match('/^(post_update_|preprocess_|update_\d+$)/', $hook->hook)) {
-      throw new \LogicException("The hook $hook->hook on class $class does not support attributes and must remain procedural.");
-    }
-  }
+	  $staticDenyHooks = [
+		'hook_info',
+		'install',
+		'install_tasks',
+		'install_tasks_alter',
+		'module_implements_alter',
+		'removed_post_updates',
+		'requirements',
+		'schema',
+		'uninstall',
+		'update_dependencies',
+		'update_last_removed',
+		];  
+		if (in_array($hookAttribute->hook, $staticDenyHooks) || preg_match('/^(post_update_|update_\\d+$)/', $hookAttribute->hook)) {
+			throw new \LogicException("The hook {$hookAttribute->hook} on class {$class} does not support attributes and must remain procedural.");
+		}
+	}
 
 }
